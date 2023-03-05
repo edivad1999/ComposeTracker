@@ -1,0 +1,50 @@
+[versions]
+aboutlib_version = "10.6.1"
+coil_version = "2.2.2"
+koin = "3.3.3"
+koin_compose = "3.4.2"
+leakcanary = "2.10"
+voyager = "1.0.0-rc07"
+ktor = "2.1.3"
+firebase_bom = "31.2.3"
+google_gms = "4.3.15"
+crashlytics_gradle = "2.9.4"
+
+[libraries]
+material = "com.google.android.material:material:1.8.0"
+desugar = "com.android.tools:desugar_jdk_libs:2.0.2"
+android-shortcut-gradle = "com.github.zellius:android-shortcut-gradle-plugin:0.1.2"
+google-services-gradle = "com.google.gms:google-services:4.3.15"
+
+aboutLibraries-gradle = { module = "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin", version.ref = "aboutlib_version" }
+aboutLibraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "aboutlib_version" }
+
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+leakcanary-plumber = { module = "com.squareup.leakcanary:plumber-android", version.ref = "leakcanary" }
+
+voyager-navigator = { module = "ca.gosyer:voyager-navigator", version.ref = "voyager" }
+voyager-tab-navigator = { module = "ca.gosyer:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "ca.gosyer:voyager-transitions", version.ref = "voyager" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+
+koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin_compose" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+
+firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase_bom" }
+firestore = { module = "com.google.firebase:firebase-firestore-ktx" }
+analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
+crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+crashlyticsGradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "crashlytics_gradle" }
+googleGms = { module = "com.google.gms:google-services", version.ref = "google_gms" }
+
+[bundles]
+voyager = ["voyager-navigator", "voyager-tab-navigator", "voyager-transitions"]
+ktor = ["ktor-client-core", "ktor-serialization", "ktor-client-cio", "ktor-client-auth", "ktor-client-content-negotiation"]
+koin = ["koin-android", "koin-compose", "koin-core"]
+firebase = ["analytics", "firestore", "crashlytics"]

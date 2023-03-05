@@ -1,0 +1,19 @@
+[versions]
+agp_version = "7.4.1"
+lifecycle_version = "2.6.0-rc01"
+
+[libraries]
+annotation = "androidx.annotation:annotation:1.6.0"
+gradle = { module = "com.android.tools.build:gradle", version.ref = "agp_version" }
+corektx = "androidx.core:core-ktx:1.10.0-beta01"
+profileinstaller = "androidx.profileinstaller:profileinstaller:1.2.2"
+
+lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "lifecycle_version" }
+lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle_version" }
+lifecycle-runtimektx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle_version" }
+
+paging-runtime = "androidx.paging:paging-runtime:3.1.1"
+paging-compose = "androidx.paging:paging-compose:1.0.0-alpha18"
+
+[bundles]
+lifecycle = ["lifecycle-common", "lifecycle-process", "lifecycle-runtimektx"]
