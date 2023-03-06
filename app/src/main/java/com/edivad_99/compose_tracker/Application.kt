@@ -8,7 +8,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
-class SmartFieldAppApplication : Application() {
+class Application : Application() {
 
 
     override fun onCreate() {
@@ -21,7 +21,7 @@ class SmartFieldAppApplication : Application() {
             // Reference Android context
             androidContext(applicationContext)
             // Load modules
-            modules(DiModules.commonModule)
+            modules(DiModules.commonModule, DiModules.modelsModule)
         }
     }
 }

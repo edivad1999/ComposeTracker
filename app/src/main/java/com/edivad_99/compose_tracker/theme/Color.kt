@@ -1,4 +1,4 @@
-package com.edivad_99.compose_tracker.ui.theme
+package com.edivad_99.compose_tracker.theme
 
 import androidx.compose.ui.graphics.Color
 
