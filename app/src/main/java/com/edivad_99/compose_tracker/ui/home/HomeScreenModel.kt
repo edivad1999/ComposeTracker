@@ -9,6 +9,7 @@ import repositories.TrackedItemRepository
 
 class HomeScreenModel(repository: TrackedItemRepository) : ScreenModel {
 
+
   val items =
       repository
           .getItems()

@@ -40,6 +40,8 @@ firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "fire
 firestore = { module = "com.google.firebase:firebase-firestore-ktx" }
 analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-storage = { module = "com.google.firebase:firebase-storage-ktx" }
+
 crashlyticsGradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "crashlytics_gradle" }
 googleGms = { module = "com.google.gms:google-services", version.ref = "google_gms" }
 
@@ -47,4 +49,4 @@ googleGms = { module = "com.google.gms:google-services", version.ref = "google_g
 voyager = ["voyager-navigator", "voyager-tab-navigator", "voyager-transitions"]
 ktor = ["ktor-client-core", "ktor-serialization", "ktor-client-cio", "ktor-client-auth", "ktor-client-content-negotiation"]
 koin = ["koin-android", "koin-compose", "koin-core"]
-firebase = ["analytics", "firestore", "crashlytics"]
+firebase = ["analytics", "firestore", "crashlytics", "firebase-storage"]

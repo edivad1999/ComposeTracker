@@ -2,6 +2,7 @@ package com.edivad_99.compose_tracker.ui.common
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FabPosition
@@ -24,7 +25,7 @@ fun TrackerScaffold(
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(containerColor),
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable (PaddingValues) -> Unit
 ) {
   Scaffold(
       modifier = modifier,
@@ -36,5 +37,5 @@ fun TrackerScaffold(
       containerColor = containerColor,
       contentColor = contentColor,
       contentWindowInsets = contentWindowInsets,
-      content = { Column(Modifier.padding(it)) { content() } })
+      content = content)
 }
