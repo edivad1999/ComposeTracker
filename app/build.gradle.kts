@@ -147,4 +147,6 @@ dependencies {
 
     api(platform(libs.firebaseBom ))
     api(libs.bundles.firebase)
+
+    implementation(libs.landscapist.coil)
 }

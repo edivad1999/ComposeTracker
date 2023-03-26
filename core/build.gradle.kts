@@ -20,5 +20,6 @@ dependencies {
     api(kotlinx.serialization.json)
     api(platform(libs.firebaseBom ))
     api(libs.firestore)
+    api(libs.firebase.storage)
 
 }

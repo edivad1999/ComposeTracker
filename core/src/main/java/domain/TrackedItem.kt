@@ -8,15 +8,15 @@ data class TrackedItem(
     val id: String = UUID.randomUUID().toString(),
     val name: String = "Test",
     val coverUrl: String = "Test",
-    val categoryId: String = UUID.randomUUID().toString(),
+    val category: Category = Category(),
     val items: List<TrackedSubItem> = emptyList()
 )
 
 @Serializable
 data class Category(
     val id: String = UUID.randomUUID().toString(),
-    val name: String,
-    val orderWeight: Int
+    val name: String  = "Default",
+    val orderWeight: Int = 0
 )
 
 @Serializable
