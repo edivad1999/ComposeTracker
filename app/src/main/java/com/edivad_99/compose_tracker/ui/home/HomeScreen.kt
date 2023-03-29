@@ -80,8 +80,7 @@ fun HomeScreenSuccess(state: DataResponse.Success<List<TrackedItem>>, onReload: 
             items(state.data) {
 
                 FireStorageCoilImage(
-                    fileReference = it.coverUrl,
-                    get(),
+                    get<StorageReference>().child("images/cartello_viario.jpg"),
                     imageOptions = ImageOptions(
                         contentScale = ContentScale.Crop, alignment = Alignment.Center
                     ), failure = {
@@ -95,88 +94,3 @@ fun HomeScreenSuccess(state: DataResponse.Success<List<TrackedItem>>, onReload: 
     }
 }
 
-
-@Composable
-fun FireStorageCoilImage(
-    fileReference: String,
-    storageReference: StorageReference,
-    modifier: Modifier = Modifier,
-    imageLoader: @Composable () -> ImageLoader = {
-        LocalCoilImageLoader.current ?: LocalContext.current.imageLoader
-    },
-    component: ImageComponent = rememberImageComponent {},
-    requestListener: (() -> ImageRequest.Listener)? = null,
-    imageOptions: ImageOptions = ImageOptions(),
-    onImageStateChanged: (CoilImageState) -> Unit = {},
-    @DrawableRes previewPlaceholder: Int = 0,
-    loading: @Composable (BoxScope.(imageState: CoilImageState.Loading) -> Unit)? = null,
-    success: @Composable (BoxScope.(imageState: CoilImageState.Success) -> Unit)? = null,
-    failure: @Composable (BoxScope.(imageState: CoilImageState.Failure) -> Unit)? = null,
-) {
-
-    var uri: DataResponse<Uri> by remember {
-        mutableStateOf(DataResponse.Loading)
-    }
-    LaunchedEffect(Unit) {
-        val fetchUri = withContext(Dispatchers.IO) {
-            FireStorageCacheProvider.getFromCache(storageReference, fileReference)
-        }
-        withContext(Dispatchers.Main) {
-            uri = fetchUri
-        }
-
-    }
-    when (val uri = uri) {
-        is DataResponse.Success -> CoilImage(
-            imageModel = {
-                uri.data
-            },
-            modifier = modifier,
-            imageLoader = imageLoader,
-            component = component,
-            requestListener = requestListener,
-            imageOptions = imageOptions,
-            onImageStateChanged = onImageStateChanged,
-            previewPlaceholder = previewPlaceholder,
-            loading = loading,
-            success = success,
-            failure = failure
-        )
-
-        is DataResponse.Error -> Box(modifier) {
-            failure?.invoke(this, CoilImageState.Failure(null, Throwable(uri.message)))
-        }
-
-        is DataResponse.Loading -> Box(modifier) {
-            loading?.invoke(this, CoilImageState.Loading)
-        }
-    }
-}
-
-object FireStorageCacheProvider {
-    private val cache = mutableMapOf<String, Uri>()
-    suspend fun getFromCache(
-        storageReference: StorageReference,
-        childPath: String
-    ): DataResponse<Uri> {
-        val childPath = "images/cartello_viario.jpg"
-        val uri = cache[childPath]
-        return if (uri != null) {
-            println("using cached URI $uri for FILE $childPath")
-            DataResponse.Success(uri)
-        } else {
-            runCatching {
-                val uri = storageReference.child(childPath).downloadUrl.await()
-
-                cache[childPath] = uri
-                println("got URI $uri for FILE $childPath")
-
-                DataResponse.Success(uri)
-            }.getOrElse {
-                DataResponse.Error(it.localizedMessage ?: "Error in fetching image")
-            }
-        }
-
-    }
-
-}
