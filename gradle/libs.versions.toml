@@ -6,7 +6,7 @@ koin_compose = "3.4.2"
 leakcanary = "2.10"
 voyager = "1.0.0-rc07"
 ktor = "2.2.2"
-firebase_bom = "31.3.0"
+firebase_bom = "31.4.0"
 google_gms = "4.3.15"
 crashlytics_gradle = "2.9.4"
 

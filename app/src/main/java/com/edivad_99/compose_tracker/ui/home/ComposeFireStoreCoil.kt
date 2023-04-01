@@ -1,5 +1,6 @@
 package com.edivad_99.compose_tracker.ui.home
 
+import android.content.Context
 import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
@@ -122,13 +123,7 @@ fun FireStorageCoilImage(
     success: @Composable (BoxScope.(imageState: CoilImageState.Success) -> Unit)? = null,
     failure: @Composable (BoxScope.(imageState: CoilImageState.Failure) -> Unit)? = null,
 ) {
-    val context = LocalContext.current
-    val imageLoader = remember {
-        ImageLoader.Builder(context).components {
-                add(StorageReferenceFetcher.Factory())
-                add(StorageReferenceKeyer())
-            }.build()
-    }
+    val imageLoader = rememberComposeFireCoil()
     CompositionLocalProvider(LocalCoilImageLoader provides imageLoader) {
         CoilImage(
             imageModel = {
@@ -149,3 +144,27 @@ fun FireStorageCoilImage(
     }
 }
 
+@Composable
+fun rememberComposeFireCoil(): ImageLoader {
+    val context = LocalContext.current.applicationContext
+    return remember {
+        ComposeFireStoreCoil.getImageLoader(context)
+    }
+}
+
+
+object ComposeFireStoreCoil {
+
+    private var _imageLoader: ImageLoader? = null
+
+    fun getImageLoader(context: Context): ImageLoader =
+        _imageLoader ?: ImageLoader.Builder(context).components {
+            add(StorageReferenceFetcher.Factory())
+            add(StorageReferenceKeyer())
+        }.build().also {
+            _imageLoader?.shutdown()
+            _imageLoader = it
+        }
+
+
+}

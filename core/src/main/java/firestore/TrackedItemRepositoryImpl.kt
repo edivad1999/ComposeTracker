@@ -4,6 +4,7 @@ import com.google.firebase.firestore.CollectionReference
 import domain.DataResponse
 import domain.TrackedItem
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import repositories.TrackedItemRepository
@@ -11,7 +12,6 @@ import repositories.TrackedItemRepository
 class TrackedItemRepositoryImpl(private val collection: CollectionReference): TrackedItemRepository {
 
     override fun getItems() = flow {
-        emit(DataResponse.Loading)
         runCatching {
             collection.get().await().toObjects(TrackedItem::class.java).toList()
         }.onSuccess {
@@ -25,7 +25,8 @@ class TrackedItemRepositoryImpl(private val collection: CollectionReference): Tr
         emit(DataResponse.Loading)
         runCatching {
             collection.whereEqualTo(TrackedItem::id.name, id).get().await()
-                .toObjects(TrackedItem::class.java).firstOrNull() ?: throw Error("Could not retrieve an element with this id")
+                .toObjects(TrackedItem::class.java).firstOrNull()
+                ?: throw Error("Could not retrieve an element with this id")
         }.onSuccess {
             emit(DataResponse.Success(it))
         }.onFailure {
