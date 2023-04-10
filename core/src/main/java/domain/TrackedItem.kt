@@ -8,7 +8,7 @@ import kotlin.random.Random
 data class TrackedItem(
     val id: String = UUID.randomUUID().toString(),
     val name: String = "Test",
-    val coverUrl: String = "Test",
+    val coverUrl: String? = "Test",
     val category: Category? = Random.nextBoolean().let {
         if (it) Category()
         else null

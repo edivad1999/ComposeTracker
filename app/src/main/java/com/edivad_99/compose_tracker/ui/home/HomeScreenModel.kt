@@ -1,8 +1,12 @@
 package com.edivad_99.compose_tracker.ui.home
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.coroutineScope
+import com.edivad_99.compose_tracker.utils.TrackerSnackBar
 import domain.Category
 import domain.DataResponse
 import domain.TrackedItem
@@ -12,15 +16,15 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import okhttp3.internal.toImmutableMap
 import repositories.TrackedItemRepository
+import java.time.LocalDateTime
 import java.util.Random
-import java.util.SortedMap
 
 
 class HomeScreenModel(private val repository: TrackedItemRepository) :
     StateScreenModel<HomeScreenState>(HomeScreenState.Loading) {
 
+    var isAdding by mutableStateOf(false)
 
 
     init {
@@ -32,24 +36,10 @@ class HomeScreenModel(private val repository: TrackedItemRepository) :
     }
 
     fun addTrackedItem() {
-        coroutineScope.launch(Dispatchers.IO) {
-            val item = Random().nextBoolean().let {
-                if (it) TrackedItem()
-                else TrackedItem(
-                    category = Category(
-                        name = LoremIpsum().values.toList().joinToString("").let {
-                            val it = it.split(" ")
-                            val index = Random().nextInt().let {
-                                if (it < 0) -it else it
-                            } % it.size
-                            it[index]
-                        })
-                )
-            }
-            repository.addItem(item).collectLatest {
-                if (it is DataResponse.Success) reload()
-            }
-        }
+        isAdding = true
+    }
+    fun onAddFinished(){
+        isAdding =false
     }
 
     fun reload() {

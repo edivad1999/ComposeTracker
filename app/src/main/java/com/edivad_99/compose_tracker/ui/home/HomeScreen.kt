@@ -21,12 +21,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,12 +41,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import cafe.adriel.voyager.core.screen.Screen
+import com.edivad_99.compose_tracker.ui.addTrackedItemScreen.AddTrackedItemScreen
 import com.edivad_99.compose_tracker.ui.common.CommonErrorScreen
 import com.edivad_99.compose_tracker.ui.common.CommonLoadingScreen
 import com.edivad_99.compose_tracker.ui.common.PullRefresh
 import com.edivad_99.compose_tracker.utils.pagerTabIndicatorOffset
 import com.google.firebase.storage.StorageReference
 import com.skydoves.landscapist.ImageOptions
+import domain.Category
 import domain.TrackedItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -59,7 +63,11 @@ class HomeScreen() : Screen {
         val state by model.state.collectAsState()
         Column() {
             HomeScreenComponent(
-                state = state, onReload = model::reload, onFabClick = model::addTrackedItem
+                state = state,
+                isAddingTrackedItem = model.isAdding,
+                onReload = model::reload,
+                onFabClick = model::addTrackedItem,
+                onAddFinished = model::onAddFinished
             )
 
         }
@@ -67,11 +75,35 @@ class HomeScreen() : Screen {
 }
 
 @Composable
-fun HomeScreenComponent(state: HomeScreenState, onReload: () -> Unit, onFabClick: () -> Unit) {
+fun IsAddingComponent(
+    categories: List<Category>,
+    isAdding: Boolean, onDismissRequest: () -> Unit
+) {
+    if (isAdding) {
+        AddTrackedItemScreen(availableCategories = categories, onDismissRequest = onDismissRequest)
+    }
+}
+
+@Composable
+fun HomeScreenComponent(
+    state: HomeScreenState, isAddingTrackedItem: Boolean,
+    onReload: () -> Unit, onFabClick: () -> Unit, onAddFinished: () -> Unit
+) {
     when (state) {
         is HomeScreenState.Error -> CommonErrorScreen(message = state.message) { onReload() }
         is HomeScreenState.Loading -> CommonLoadingScreen()
-        is HomeScreenState.Success -> HomeScreenSuccess(state, onReload, onFabClick)
+        is HomeScreenState.Success -> {
+            val categories = remember(state) {
+                state.data.map {
+                    it.category
+                }
+            }
+            IsAddingComponent(
+                categories = categories,
+                isAdding = isAddingTrackedItem, onDismissRequest = onAddFinished
+            )
+            HomeScreenSuccess(state, onReload, onFabClick)
+        }
     }
 }
 
@@ -80,13 +112,16 @@ fun HomeScreenComponent(state: HomeScreenState, onReload: () -> Unit, onFabClick
 fun HomeScreenSuccess(
     state: HomeScreenState.Success, onReload: () -> Unit, onFabClick: () -> Unit
 ) {
+
     val coroutine = rememberCoroutineScope()
+
     PullRefresh(refreshing = false, onRefresh = onReload, enabled = true) {
         val pagerState = rememberPagerState()
 
         Box(modifier = Modifier.fillMaxSize()) {
             Column(Modifier.fillMaxSize()) {
-                TabRow(
+                ScrollableTabRow(
+                    edgePadding = 8.dp,
                     selectedTabIndex = kotlin.runCatching { pagerState.currentPage }.onFailure {
                         coroutine.launch {
                             pagerState.animateScrollToPage(0)
@@ -109,7 +144,7 @@ fun HomeScreenSuccess(
                 HorizontalPager(
                     pageCount = state.data.size, state = pagerState
                 ) { pageNumber ->
-                    val selectedCategory = state.data.get(pageNumber)
+                    val selectedCategory = state.data[pageNumber]
                     val items = selectedCategory.list
                     if (items.isNotEmpty()) LazyVerticalGrid(
                         columns = GridCells.Fixed(2), modifier = Modifier.fillMaxSize()
@@ -136,7 +171,9 @@ fun HomeScreenSuccess(
             }
             FloatingActionButton(
                 onClick = onFabClick,
-                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
             ) {
                 Icon(Icons.Default.Add, null)
             }
@@ -161,3 +198,4 @@ fun HomeScreenTrackedItem(modifier: Modifier = Modifier, trackedItem: TrackedIte
 
     Spacer(Modifier.size(8.dp))
 }
+

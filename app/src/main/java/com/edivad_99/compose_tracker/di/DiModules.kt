@@ -1,5 +1,6 @@
 package com.edivad_99.compose_tracker.di
 
+import com.edivad_99.compose_tracker.ui.addTrackedItemScreen.TrackedItemModel
 import com.edivad_99.compose_tracker.ui.home.HomeScreenModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -26,5 +27,15 @@ object DiModules {
         }
 
     val modelsModule
-        get() = module { factory { HomeScreenModel(get()) } }
+        get() = module {
+            factory { HomeScreenModel(get()) }
+            factory {
+                TrackedItemModel(
+                    repository = get(),
+                    storageReference = get(),
+                    categories = it.get()
+                )
+            }
+
+        }
 }

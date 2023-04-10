@@ -39,7 +39,6 @@ import okio.source
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-class ComposeFireCoil {}
 
 class StorageReferenceKeyer : Keyer<StorageReference> {
     override fun key(data: StorageReference, options: Options): String = data.path
