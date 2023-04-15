@@ -9,7 +9,7 @@ interface TrackedItemRepository {
 
     fun getItemById(id: String): Flow<DataResponse<TrackedItem>>
 
-    fun addItem(trackedItem: TrackedItem):Flow<DataResponse<TrackedItem>>
+    suspend fun addItem(trackedItem: TrackedItem):Boolean
 
     fun removeItem(trackedItem: TrackedItem):Flow<DataResponse<Unit>>
 

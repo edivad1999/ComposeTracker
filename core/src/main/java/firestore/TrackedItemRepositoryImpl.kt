@@ -1,24 +1,29 @@
 package firestore
 
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.ktx.snapshots
 import domain.DataResponse
 import domain.TrackedItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import repositories.TrackedItemRepository
 
-class TrackedItemRepositoryImpl(private val collection: CollectionReference): TrackedItemRepository {
+class TrackedItemRepositoryImpl(private val collection: CollectionReference) :
+    TrackedItemRepository {
 
-    override fun getItems() = flow {
+    override fun getItems() = collection.snapshots().map {
         runCatching {
-            collection.get().await().toObjects(TrackedItem::class.java).toList()
-        }.onSuccess {
-            emit(DataResponse.Success(it))
-        }.onFailure {
-            emit(DataResponse.Error(it.localizedMessage ?: "Error"))
-        }
+            if (!it.isEmpty) {
+                val list = it.toObjects(TrackedItem::class.java).toList()
+                DataResponse.Success(list)
+            } else {
+                DataResponse.Success(emptyList<TrackedItem>())
+            }
+        }.getOrElse { DataResponse.Error("Error") }
     }
 
     override fun getItemById(id: String) = flow {
@@ -34,21 +39,15 @@ class TrackedItemRepositoryImpl(private val collection: CollectionReference): Tr
         }
     }
 
-    override fun addItem(trackedItem: TrackedItem) = flow {
-        emit(DataResponse.Loading)
-        runCatching {
-            val id = collection.document().id
-            val trackedItemToInsert = trackedItem.copy(
-                id = id
-            )
-            collection.document(id).set(trackedItemToInsert).await()
-            trackedItemToInsert
-        }.onSuccess {
-            emit(DataResponse.Success(it))
-        }.onFailure {
-            emit(DataResponse.Error(it.localizedMessage ?: "Error"))
-        }
-    }
+    override suspend fun addItem(trackedItem: TrackedItem) = runCatching {
+        val id = collection.document().id
+        val trackedItemToInsert = trackedItem.copy(
+            id = id
+        )
+        collection.document(id).set(trackedItemToInsert).await()
+        true
+    }.getOrElse { false }
+
 
     override fun removeItem(trackedItem: TrackedItem) = flow {
         emit(DataResponse.Loading)

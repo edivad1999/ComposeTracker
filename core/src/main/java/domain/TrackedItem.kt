@@ -20,13 +20,16 @@ data class TrackedItem(
 data class Category(
     val name: String = "Test",
     val orderWeight: Int = 0
-){
-    companion object{
-        fun default()= Category("Default", -99)
+) {
+    companion object {
+        fun default() = Category("Default", -99)
     }
 }
 
 @Serializable
 data class TrackedSubItem(
     val name: String, val orderWeight: Int, val completedNumber: Int, val isCompleted: Boolean
-)
+) {
+    constructor() : this("", 0, completedNumber = 0, isCompleted = false)
+
+}

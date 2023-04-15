@@ -14,11 +14,11 @@ if (gradle.startParameter.taskRequests.toString().contains("Standard")) {
 val SUPPORTED_ABIS = setOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
 
 android {
-    namespace ="com.edivad_99.compose_tracker"
+    namespace ="com.edivad99.composeTracker"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.edivad_99.compose_tracker"
+        applicationId = "com.edivad99.composeTracker"
         minSdk =28
         targetSdk =33
         versionCode =1
@@ -46,6 +46,7 @@ android {
             isDebuggable = false
             isShrinkResources = true
             isMinifyEnabled = true
+
             proguardFiles("proguard-android-optimize.txt", "proguard-rules.pro")
         }
         debug{

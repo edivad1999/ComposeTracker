@@ -31,11 +31,11 @@
     kotlinx.serialization.KSerializer serializer(...);
 }
 
--keep,includedescriptorclasses class com.edivad_99.**$$serializer { *; }
+-keep,includedescriptorclasses class com.edivad99.**$$serializer { *; }
 -keepclassmembers class eu.kanade.** {
     *** Companion;
 }
--keepclasseswithmembers class com.edivad_99.** {
+-keepclasseswithmembers class com.edivad99.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
 
